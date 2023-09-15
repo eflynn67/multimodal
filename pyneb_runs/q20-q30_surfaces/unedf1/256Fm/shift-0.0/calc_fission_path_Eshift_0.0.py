@@ -26,8 +26,8 @@ if __name__ == "__main__":
     edf = 'unedf1'
     nuc = '256Fm'
     
-    save_data = False
-    save_plt = False
+    save_data = True
+    save_plt = True
 
     surface_path = os.path.expanduser(f'~/multimodal/surfaces/q20-q30_surfaces/{edf}/{nuc}.h5') 
     
@@ -199,7 +199,7 @@ if __name__ == "__main__":
     
     path_type = ['Asymmetric_1','Asymmetric_2','Symmetric_1']
     NImgs = 35
-    k = 25.0 
+    k = 1.0 
     kappa = 2.0
     
     E_const = 0.0
@@ -218,11 +218,11 @@ if __name__ == "__main__":
     
     dt = .1
     NIterations_const = 0
-    NIterations_var = 30000
+    NIterations_var = 60000
     
     ### define initial path
     R0 = iso_coord_grid
-    RNArr = [180,8.1],[180,8.5]#],[200,0]]#,[,[190,3],[170,0]]
+    RNArr = [[180,8.26],[180,7.5]]#],[200,0]]#,[,[190,3],[170,0]]
     #RNArr = [[190,5], [200,0]]
 
     colorArr = ['purple','lime','red']

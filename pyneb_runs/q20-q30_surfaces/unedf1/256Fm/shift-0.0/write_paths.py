@@ -18,7 +18,7 @@ if __name__ == "__main__":
     
     today = date.today()
     ### Define nucleus data path (assumes our github structure)
-    edf = 'skmstar'
+    edf = 'unedf1'
     nuc = '256Fm'
 
 
@@ -190,6 +190,14 @@ if __name__ == "__main__":
     
     for path_loc in paths_dir:
         path = pd.read_csv(path_loc,sep=',')
+        print(path)
+        path_call = utilities.InterpolatedPath(path.to_numpy())
+        #t = np.linspace(0,1,500)
+        path_energy = path_call.compute_along_path(V_func,500)
+        path_pnts = path.call.find_points_with_select_energy(V_func,path_energy)
+        print(path_pnts)
+
+'''
         path_loc = path_loc.rstrip('txt')
         print(path_loc)
         inertia_path = M_func(path.to_numpy())
@@ -207,4 +215,4 @@ if __name__ == "__main__":
         path['M23'] = np.array(M23)
         path['M33'] = np.array(M33)
         path.to_csv(path_loc+'dat',sep='\t',index=False)
-        
+'''
