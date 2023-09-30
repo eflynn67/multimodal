@@ -127,7 +127,7 @@ if __name__ == "__main__":
     #              for key in mass_keys}
     for key in mass_keys:
         mass_list_psd.append(mass_grids[key])
-    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
+    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'_test_linear':True},_test_nd=False)
 
     
     ###############################################################################
@@ -198,7 +198,7 @@ if __name__ == "__main__":
 ###############################################################################
     
     path_type = ['Asymmetric','Symmetric_1','Symmetric_2']
-    NImgs = 122
+    NImgs = 82
     k = 2.0 
     kappa = 10.0
     
@@ -217,11 +217,11 @@ if __name__ == "__main__":
     
     dt = .1
     NIterations_const =0
-    NIterations_var =5000
+    NIterations_var = 6000
     
     ### define initial path
     R0 = gs_coord_grid
-    RNArr = [[124.27,0],[124.27,0]]
+    RNArr = [[124.27,0]]
     #RNArr = [[132,0],[132,0]]
     colorArr = ['purple','red','lime']
     

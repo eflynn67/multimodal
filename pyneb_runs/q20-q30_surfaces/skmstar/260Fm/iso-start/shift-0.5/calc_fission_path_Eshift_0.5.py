@@ -126,7 +126,7 @@ if __name__ == "__main__":
     #              for key in mass_keys}
     for key in mass_keys:
         mass_list_psd.append(mass_grids[key])
-    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
+    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'_test_linear':True},_test_nd=False)
 
 
     
@@ -218,11 +218,11 @@ if __name__ == "__main__":
     
     dt = .1
     NIterations_const = 0
-    NIterations_var = 100000
+    NIterations_var = 15000
     
     ### define initial path
     R0 = [185,0]
-    RNArr = [[225,15]]
+    RNArr = [[195,1]]
 
     colorArr = ['purple','red','lime']
     
@@ -326,7 +326,7 @@ if __name__ == "__main__":
             ax2.plot(range(NIterations_const+2),actionArr_const[k],label=f'{path_type[k]}: '+str(np.round(actionArr_const[k][-1],2)),color=colorArr[k])
             ax2.set_xlabel('Iterations')
             ax2.set_ylabel('Action')
-            ax2.legend(frameon=True, fancybox=True)
+            ax2.legend(frameon=True, fancybox=True)ndInterpKWargs={'_test_linear':True}
         plt.title(f'{nuc} Constant inertia tensor Econst = {E_const}')
         plt.legend()
         plt.show()

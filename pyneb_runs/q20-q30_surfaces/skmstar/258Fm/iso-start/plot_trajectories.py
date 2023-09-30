@@ -32,8 +32,9 @@ if __name__ == "__main__":
     save_plt = False
     surface_path = os.path.expanduser(f'~/multimodal/surfaces/q20-q30_surfaces/{edf}/{nuc}.h5') 
     E_const_arr = [0,0.5,1]
-    path_files_asym = sorted(glob.glob('shift-*/258Fm_path_Asymmetric_Mass_True_Econst_*.txt'))
-    path_files_sym = sorted(glob.glob('shift-*/258Fm_path_Symmetric_1_Mass_True_Econst_*.txt'))
+    path_files_asym = sorted(glob.glob('shift-*/258Fm_path_Asymmetric_Mass_True_Econst_0.0_*.txt'))
+    path_files_asym2 = sorted(glob.glob('shift-*/258Fm_path_Asymmetric_2_Mass_True_Econst_0.0.txt'))
+    path_files_sym = sorted(glob.glob('shift-*/258Fm_path_Symmetric_1_Mass_True_Econst_0.0.txt'))
     print(path_files_asym)
     
     ### defines PES object from utils.py
@@ -80,18 +81,15 @@ if __name__ == "__main__":
     ###############################################################################
     ## Create inertia tensor functions
     ###############################################################################
-    if use_mass == True:
-       #mass_list = {}
-       mass_list_psd = []
-       #for key in mass_keys:
-       #    mass_list[key] = mass_grids[key].reshape(coord_arrays[0].shape)
-       #mass_grids_func = {key: rbf_M_func(coord_arrays,mass_list[key],) \
-       #              for key in mass_keys}
-       for key in mass_keys:
-           mass_list_psd.append(mass_grids[key])
-       M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
-    else:
-        M_func = None
+    #mass_list = {}
+    mass_list_psd = []
+    #for key in mass_keys:
+    #    mass_list[key] = mass_grids[key].reshape(coord_arrays[0].shape)
+    #mass_grids_func = {key: rbf_M_func(coord_arrays,mass_list[key],) \
+    #              for key in mass_keys}
+    for key in mass_keys:
+        mass_list_psd.append(mass_grids[key])
+    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'splKWargs':{'kx':1,'ky':1}},_test_nd=False)
         
     
     
@@ -135,9 +133,9 @@ if __name__ == "__main__":
     # Plot Interpolated grid
     ###############################################################################
     fig, ax = plt.subplots(1,1)
-    im = ax.contourf(xx_fine,yy_fine,EE_fine.clip(-5,15),levels= 100,
+    im = ax.contourf(xx_fine,yy_fine,EE_fine.clip(-10,15),levels= 100,
                      extend='both',cmap='Spectral_r')
-    cs = ax.contour(xx_fine,yy_fine,EE_fine.clip(-5,15),levels=[-3,-2,2,4,5],colors='black',linewidths=.8)
+    cs = ax.contour(xx_fine,yy_fine,EE_fine.clip(-10,15),levels=[-3,-2,2,4,5],colors='black',linewidths=.8)
     color_arr = ['red','green','blue']
     ax.clabel(cs, cs.levels, inline=True, fontsize=8)
     otl1 = ax.contour(xx_fine,yy_fine,EE_fine,levels=[0],colors=color_arr[0],linewidths=1.5)
@@ -151,6 +149,7 @@ if __name__ == "__main__":
 
     Eshifts = [0.0,0.5,1.0]
     for i,fpath in enumerate(path_files_asym):
+        
         print(fpath)
         data = np.loadtxt(fpath,delimiter=',',skiprows=1) 
         ax.plot(data[:,0],data[:,1],'--',ms=24,color=color_arr[i], zorder=10, clip_on=False)
@@ -160,6 +159,17 @@ if __name__ == "__main__":
         print(f'Action = {action}')
         print(f'Exit point = {data[-1]}')
 
+    for i,fpath in enumerate(path_files_asym2):
+        
+        print(fpath)
+        data = np.loadtxt(fpath,delimiter=',',skiprows=1) 
+        ax.plot(data[:,0],data[:,1],'--',ms=24,color=color_arr[i], zorder=10, clip_on=False)
+        ax.plot(data[:,0][-1],data[:,1][-1],'s',ms=4,color=color_arr[i])
+        path_call = utilities.InterpolatedPath(data)
+        action = np.around(path_call.compute_along_path(utilities.TargetFunctions.action,500,tfArgs=[V_func,M_func],tfKWargs={})[1][0],4)
+        print(f'Action = {action}')
+        print(f'Exit point = {data[-1]}')
+        
     for i,fpath in enumerate(path_files_sym):
         print(fpath)
         data = np.loadtxt(fpath,delimiter=',',skiprows=1) 
@@ -170,8 +180,8 @@ if __name__ == "__main__":
         print(f'Action = {action}')
         print(f'Exit point = {data[-1]}')
 
-    plt.xlim([100,280])
-    plt.ylim([0,28])
+    plt.xlim([0,320])
+    plt.ylim([0,32])
     plt.xlabel(r'$Q_{20}$ (b)')
     plt.ylabel(r'$Q_{30}$ (b$^{3/2}$)')
     plt.legend()

@@ -189,18 +189,14 @@ if __name__ == "__main__":
     paths_dir = glob.glob('256Fm_path_*_Mass_True_Econst_*.txt')
     
     for path_loc in paths_dir:
+        
         path = pd.read_csv(path_loc,sep=',')
-        print(path)
+        course_energy = V_func(path.to_numpy())
         path_call = utilities.InterpolatedPath(path.to_numpy())
-        #t = np.linspace(0,1,500)
-        path_energy = path_call.compute_along_path(V_func,500)
-        path_pnts = path.call.find_points_with_select_energy(V_func,path_energy)
-        print(path_pnts)
+        interp_path,energy_along_path = path_call.compute_along_path(V_func,500,tfArgs=[],tfKWargs={})
 
-'''
         path_loc = path_loc.rstrip('txt')
-        print(path_loc)
-        inertia_path = M_func(path.to_numpy())
+        inertia_path = M_func(interp_path)
         M22 = []
         M23 = []
         M33 = []
@@ -209,10 +205,7 @@ if __name__ == "__main__":
             M23.append(M[0][1])
             M33.append(M[1][1])
         
-        energy_path = V_func(path.to_numpy())
-        path['EHFB'] = energy_path
-        path['M22'] = np.array(M22)
-        path['M23'] = np.array(M23)
-        path['M33'] = np.array(M33)
-        path.to_csv(path_loc+'dat',sep='\t',index=False)
-'''
+        data_to_write = np.stack([interp_path[:,0],interp_path[:,1],energy_along_path,M22,M23,M33],axis=-1)
+        newDf = pd.DataFrame(data_to_write, columns=['Q20', 'Q30','EHFB','M22','M23','M33'])
+        
+        newDf.to_csv(path_loc+'dat',sep='\t',index=False)

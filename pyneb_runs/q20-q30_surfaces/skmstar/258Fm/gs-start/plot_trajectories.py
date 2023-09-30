@@ -80,18 +80,15 @@ if __name__ == "__main__":
     ###############################################################################
     ## Create inertia tensor functions
     ###############################################################################
-    if use_mass == True:
-       #mass_list = {}
-       mass_list_psd = []
-       #for key in mass_keys:
-       #    mass_list[key] = mass_grids[key].reshape(coord_arrays[0].shape)
-       #mass_grids_func = {key: rbf_M_func(coord_arrays,mass_list[key],) \
-       #              for key in mass_keys}
-       for key in mass_keys:
-           mass_list_psd.append(mass_grids[key])
-       M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
-    else:
-        M_func = None
+    #mass_list = {}
+    mass_list_psd = []
+    #for key in mass_keys:
+    #    mass_list[key] = mass_grids[key].reshape(coord_arrays[0].shape)
+    #mass_grids_func = {key: rbf_M_func(coord_arrays,mass_list[key],) \
+    #              for key in mass_keys}
+    for key in mass_keys:
+        mass_list_psd.append(mass_grids[key])
+    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'splKWargs':{'kx':1,'ky':1}},_test_nd=False)
         
     
     

@@ -11,49 +11,44 @@ if pyNebDir not in sys.path:
 from utilities import *
 pd.set_option('display.max_columns', 7)
 nuc = '258Fm'
-fName = f'3d/{nuc}_UNEDF1.dat' #f"3d/{nuc}_SkMstar.dat"
+edf ='skms'
+fName = f'{edf}/{nuc}_raw.dat'
 with open(fName) as fIn:
     headerLine = fIn.readline()
 header = headerLine.lstrip("#").split()
 
-df = pd.read_csv(fName,delimiter="\t",names=header,skiprows=1)
-df = df.rename(columns={"EHFB":"EHFB","M_22":"B2020","M_32":"B2030","M_42":"B2040","M_33":"B3030","M_43":"B3040","M_44":"B4040"})
+df = pd.read_csv(fName,delimiter="\s+",names=header,skiprows=1)
+df = df.rename(columns={"EHFB":"EHFB","M_22":"M_22","M_32":"M_23","M_42":"M_24","M_33":"M_33","M_43":"M_34","M_44":"M_44"})
 
-q20UnVals = np.unique(df["Q20"])
-q30UnVals = np.unique(df["Q30"])
-q40UnVals = np.unique(df["Q40"])
-#print('q20vals ',q20UnVals,len(q20UnVals))
-#print('q30vals ',q30UnVals,len(q30UnVals))
-#print('q40vals ',q40UnVals,len(q40UnVals))
-
+q20UnVals = np.unique(df["expected_q20"])
+q30UnVals = np.unique(df["expected_q30"])
+q40UnVals = np.unique(df["expected_q40"])
+df = df.dropna(axis=0)
 expectedMesh = np.meshgrid(q20UnVals,q30UnVals,q40UnVals)
 expectedFlat = np.array([[q2,q3,q4] for q2 in q20UnVals for q3 in q30UnVals for q4 in q40UnVals])
 
+newDf = pd.DataFrame(data=expectedFlat,columns=["expected_q20","expected_q30","expected_q40"])
 
 
+newDf = newDf.merge(df,on=["expected_q20","expected_q30","expected_q40"],how="outer")
 
-newDf = df.copy()
 
-
+#newDf = newDf.rename(columns={"expected_q20":'q20',"expected_q30":'q30',"expected_q40":'q40'})
 newDf["is_interp"] = newDf["EHFB"].isna()
 
-df["is_interp"] = df["EHFB"].isna()
+idxToInterp = newDf[newDf["is_interp"]==True].index
 
-idxToInterp = df[df["is_interp"]==True].index
-ptsToInterp = np.array(df[["Q20","Q30","Q40"]].iloc[idxToInterp])
+ptsToInterp = np.array(newDf[["expected_q20","expected_q30","expected_q40"]].iloc[idxToInterp])
 
-newDf = newDf.dropna(axis=0,how='any')
-print(newDf)
-interpCols = ["EHFB","B2020","B2030","B2040","B3030","B3040","B4040"]
-
+interpCols = ["EHFB","M_22","M_23","M_24","M_33","M_34","M_44"]
 
 for head in interpCols:
-    interp_func = RBFInterpolator(np.array(newDf[["Q20","Q30","Q40"]]),newDf[head],neighbors=200)
-    interp_val = interp_func(ptsToInterp)
-    df[head].iloc[idxToInterp] = interp_val
-    
+    interp_func = RBFInterpolator(df[["expected_q20","expected_q30","expected_q40"]].to_numpy(),df[head],neighbors=500)
+    newDf[head].iloc[idxToInterp] = interp_func(ptsToInterp)
 
-h5File = h5py.File(f"./3d/{nuc}_UNEDF1.h5","w")
+newDf.to_csv(f'{edf}/{nuc}.dat',sep=',')    
+'''
+h5File = h5py.File(f"./{nuc}.dat","w")
 h5File.attrs.create("DFT","SKMs")
 
 h5File.attrs.create("interp_method","scipy.interpolate.RBFInterpolator")
@@ -61,3 +56,4 @@ for col in df.columns:
     h5File.create_dataset(col,data=np.array(df[col]))
 
 h5File.close()
+'''

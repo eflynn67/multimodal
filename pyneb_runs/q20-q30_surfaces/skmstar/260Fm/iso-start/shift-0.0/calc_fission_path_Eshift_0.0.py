@@ -36,11 +36,13 @@ if __name__ == "__main__":
     uniq_coords = PES.get_unique(return_type='array')
     grids,EE = PES.get_grids(return_coord_grid=True)
     coord_arrays,eng = PES.get_coord_arrays()
-
     mass_grids = PES.get_mass_grids()
     mass_keys = mass_grids.keys()
+    for key in mass_keys:
+        print(key)
     ### IMPORTANT: LIST THE INDICIES OF THE MASS TENSOR TO USE.
     mass_tensor_indicies = ['20','30']
+
 
 
     ### Find minimum on DFT grids.
@@ -102,8 +104,8 @@ if __name__ == "__main__":
     plt.xlabel(r'$Q_{20}$ (b)')
     plt.ylabel(r'$Q_{30}$ (b$^{3/2}$)')
     plt.title(r'DFT $M_{22}$'+f' {nuc}'+r' SkM$^{*}$')
-    plt.xlim([0,300])
-    plt.ylim([0,32])
+    plt.xlim([150,230])
+    plt.ylim([0,3])
     #plt.savefig('M22_grid_plot.pdf')
     plt.show()
 
@@ -118,16 +120,10 @@ if __name__ == "__main__":
     ###############################################################################
     ## Create inertia tensor functions
     ###############################################################################
-    #mass_list = {}
     mass_list_psd = []
-    #for key in mass_keys:
-    #    mass_list[key] = mass_grids[key].reshape(coord_arrays[0].shape)
-    #mass_grids_func = {key: rbf_M_func(coord_arrays,mass_list[key],) \
-    #              for key in mass_keys}
     for key in mass_keys:
         mass_list_psd.append(mass_grids[key])
-    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
-
+    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'_test_linear':True},_test_nd=False)
 
     
     ###############################################################################
@@ -197,9 +193,10 @@ if __name__ == "__main__":
 ## NEB Calculation
 ###############################################################################
     
-    path_type = ['Asymmetric','Symmetric_1','Symmetric_2']
-    NImgs = 122
-    k = 2.0 
+    #path_type = ['Asymmetric','Symmetric_1','Symmetric_2']
+    path_type = ['Symmetric_2']
+    NImgs = 82
+    k = 5.0 
     kappa = 20.0
     
     E_const = 0.0
@@ -218,11 +215,11 @@ if __name__ == "__main__":
     
     dt = .1
     NIterations_const = 1000
-    NIterations_var = 80000
+    NIterations_var = 475
     
     ### define initial path
     R0 = iso_coord_grid
-    RNArr = [[220,18]]
+    RNArr = [[210,.1]]
 
     colorArr = ['purple','red','lime']
     
@@ -424,9 +421,9 @@ if __name__ == "__main__":
     ### Plot the results.
     
     fig, ax = plt.subplots(1,1)
-    im = ax.contourf(grids[0],grids[1],EE.clip(-5,15),levels= 100,extend='both',cmap='Spectral_r')
-    cs = ax.contour(grids[0],grids[1],EE.clip(-5,15),levels=6,colors='black')
-    ax.contour(grids[0],grids[1],EE,levels=[E_const],colors='white',linewidths=2)
+    im = ax.contourf(xx_fine,yy_fine,EE_fine.clip(-5,15),levels= 100,extend='both',cmap='Spectral_r')
+    cs = ax.contour(xx_fine,yy_fine,EE_fine.clip(-5,15),levels=6,colors='black')
+    ax.contour(xx_fine,yy_fine,EE_fine,levels=[E_const],colors='white',linewidths=2)
     cbar = fig.colorbar(im)
     cbar.ax.tick_params()
     ax.set_ylabel('$Q_{30}$')
@@ -459,5 +456,3 @@ if __name__ == "__main__":
     if save_plt == True:
         plt.savefig(f'action_inertia_Econst_{E_const}.pdf')
     plt.show()
-
-

@@ -13,6 +13,7 @@ sys.path.insert(0, utils_path)
 
 import utilities
 import utils
+import interpolation_funcs
 
 if __name__ == "__main__":
     
@@ -112,13 +113,9 @@ if __name__ == "__main__":
     if use_mass == True:
        #mass_list = {}
        mass_list_psd = []
-       #for key in mass_keys:
-       #    mass_list[key] = mass_grids[key].reshape(coord_arrays[0].shape)
-       #mass_grids_func = {key: rbf_M_func(coord_arrays,mass_list[key],) \
-       #              for key in mass_keys}
        for key in mass_keys:
            mass_list_psd.append(mass_grids[key])
-       M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
+       M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'_test_linear':True},_test_nd=False)
     else:
         M_func = None
 
@@ -190,9 +187,12 @@ if __name__ == "__main__":
     print(paths_dir)
     for path_loc in paths_dir:
         path = pd.read_csv(path_loc,sep=',')
+        course_energy = V_func(path.to_numpy())
+        path_call = utilities.InterpolatedPath(path.to_numpy())
+        interp_path,energy_along_path = path_call.compute_along_path(V_func,500,tfArgs=[],tfKWargs={})
+
         path_loc = path_loc.rstrip('txt')
-        print(path_loc)
-        inertia_path = M_func(path.to_numpy())
+        inertia_path = M_func(interp_path)
         M22 = []
         M23 = []
         M33 = []
@@ -201,10 +201,8 @@ if __name__ == "__main__":
             M23.append(M[0][1])
             M33.append(M[1][1])
         
-        energy_path = V_func(path.to_numpy())
-        path['EHFB'] = energy_path
-        path['M22'] = np.array(M22)
-        path['M23'] = np.array(M23)
-        path['M33'] = np.array(M33)
-        path.to_csv(path_loc+'dat',sep='\t',index=False)
+        data_to_write = np.stack([interp_path[:,0],interp_path[:,1],energy_along_path,M22,M23,M33],axis=-1)
+        newDf = pd.DataFrame(data_to_write, columns=['Q20', 'Q30','EHFB','M22','M23','M33'])
+        
+        newDf.to_csv(path_loc+'dat',sep='\t',index=False)
         

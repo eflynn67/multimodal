@@ -32,7 +32,7 @@ if __name__ == "__main__":
     save_plt = False
     surface_path = os.path.expanduser(f'~/multimodal/surfaces/q20-q30_surfaces/{edf}/{nuc}.h5') 
     E_const_arr = [0,0.5,1]
-    path_files_asym = sorted(glob.glob('shift-*/256Fm_path_Asymmetric_Mass_True_Econst_*.txt'))
+    path_files_asym = sorted(glob.glob('shift-*/256Fm_path_Asymmetric_Mass_True_Econst_0.0*.txt'))
     path_files_sym = sorted(glob.glob('shift-*/256Fm_path_Symmetric_1_Mass_True_Econst_*.txt'))
     print(path_files_asym)
     
@@ -80,18 +80,15 @@ if __name__ == "__main__":
     ###############################################################################
     ## Create inertia tensor functions
     ###############################################################################
-    if use_mass == True:
-       #mass_list = {}
-       mass_list_psd = []
-       #for key in mass_keys:
-       #    mass_list[key] = mass_grids[key].reshape(coord_arrays[0].shape)
-       #mass_grids_func = {key: rbf_M_func(coord_arrays,mass_list[key],) \
-       #              for key in mass_keys}
-       for key in mass_keys:
-           mass_list_psd.append(mass_grids[key])
-       M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
-    else:
-        M_func = None
+    #mass_list = {}
+    mass_list_psd = []
+    #for key in mass_keys:
+    #    mass_list[key] = mass_grids[key].reshape(coord_arrays[0].shape)
+    #mass_grids_func = {key: rbf_M_func(coord_arrays,mass_list[key],) \
+    #              for key in mass_keys}
+    for key in mass_keys:
+        mass_list_psd.append(mass_grids[key])
+    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'splKWargs':{'kx':1,'ky':1}},_test_nd=False)
         
     
     

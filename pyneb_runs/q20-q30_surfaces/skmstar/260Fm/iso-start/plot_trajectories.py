@@ -90,7 +90,7 @@ if __name__ == "__main__":
        #              for key in mass_keys}
        for key in mass_keys:
            mass_list_psd.append(mass_grids[key])
-       M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
+       M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'_test_linear':True},_test_nd=False)
     else:
         M_func = None
         
@@ -151,6 +151,7 @@ if __name__ == "__main__":
     cbar = fig.colorbar(im,ax=ax)
 
     Eshifts = [0.0,0.5,1.0]
+    '''
     for i,fpath in enumerate(path_files_asym):
         print(fpath)
         data = np.loadtxt(fpath,delimiter=',',skiprows=1) 
@@ -160,7 +161,7 @@ if __name__ == "__main__":
         action = np.around(path_call.compute_along_path(utilities.TargetFunctions.action,500,tfArgs=[V_func,M_func],tfKWargs={})[1][0],4)
         print(f'Action = {action}')
         print(f'Exit point = {data[-1]}')
-
+    '''
     for i,fpath in enumerate(path_files_sym):
         print(fpath)
         data = np.loadtxt(fpath,delimiter=',',skiprows=1) 

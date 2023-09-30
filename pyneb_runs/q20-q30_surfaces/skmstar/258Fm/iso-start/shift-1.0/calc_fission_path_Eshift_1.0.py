@@ -126,7 +126,7 @@ if __name__ == "__main__":
     #              for key in mass_keys}
     for key in mass_keys:
         mass_list_psd.append(mass_grids[key])
-    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
+    M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'_test_linear':False},_test_nd=False)
 
 
     
@@ -218,11 +218,12 @@ if __name__ == "__main__":
     
     dt = .1
     #path with lower action was found by doing a constant inertia pass
-    NIterations_const = 10000
-    NIterations_var = 70000
+    NIterations_const = 0
+    NIterations_var = 80000
     
     ### define initial path
     R0 = [175,0]
+    # symm [190,0]
     RNArr = [[190,12], [190,0]]
 
 

@@ -26,8 +26,8 @@ if __name__ == "__main__":
     edf = 'skmstar'
     nuc = '258Fm'
     
-    save_data = True
-    save_plt = True
+    save_data = False
+    save_plt = False
 
     surface_path = os.path.expanduser(f'~/multimodal/surfaces/q20-q30_surfaces/{edf}/{nuc}.h5') 
     
@@ -126,8 +126,8 @@ if __name__ == "__main__":
     #              for key in mass_keys}
     for key in mass_keys:
         mass_list_psd.append(mass_grids[key])
+    #M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,ndInterpKWargs={'_test_linear':True},_test_nd=False)
     M_func = utilities.PositiveSemidefInterpolator(uniq_coords,mass_list_psd,_test_nd=False)
-
 
     
     ###############################################################################
@@ -197,10 +197,10 @@ if __name__ == "__main__":
 ## NEB Calculation
 ###############################################################################
     
-    path_type = ['Asymmetric','Symmetric_1','Symmetric_2']
-    NImgs = 102
-    k = 5.0 
-    kappa = 2.0
+    path_type = ['Asymmetric_2','Symmetric_1','Symmetric_2']
+    NImgs = 82
+    k = 2.0 
+    kappa = 5.0
     
     E_const = 0.0
     
@@ -217,12 +217,12 @@ if __name__ == "__main__":
     
     
     dt = .1
-    NIterations_const =0
-    NIterations_var =70000
+    NIterations_const = 0
+    NIterations_var = 80000
     
     ### define initial path
     R0 = iso_coord_grid
-    RNArr = [[200,11],[200,0]]
+    RNArr = [[220,8.68]]
 
     colorArr = ['purple','red','lime']
     
@@ -345,7 +345,7 @@ if __name__ == "__main__":
             init_path = LAPArr_const[p]
             
         FireParams = {"dtMax":.1,"dtMin":10**(-6),"nAccel":10,"fInc":1.1,"fAlpha":0.99,\
-             "fDecel":0.5,"aStart":0.1,"maxmove":np.array([.1,.1])} 
+             "fDecel":0.5,"aStart":0.1,"maxmove":np.array([.2,.2])} 
             
         neb_params ={'k':k,'kappa':kappa,'constraintEneg':E_const}
 
