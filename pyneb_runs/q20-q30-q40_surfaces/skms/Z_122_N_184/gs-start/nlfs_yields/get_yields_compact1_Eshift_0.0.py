@@ -936,15 +936,15 @@ xlims = (-20,20)
 ylims = (-20,20)
 
 # locFiles = ["localizations/"+f for f in os.listdir("localizations")]
-mode = 'compact'
+mode = 'compact1'
 Eshift = '0.0'
 center_method = 'lines'
 locFiles = [f'localization_{mode}.dat',]
 
-# neutronLocs = [7.56,-5.15]
-# protonLocs = [6.58,-5.65]
-A = 258
-Z = 100
+neutronLocs = [5.26,-5.26]
+protonLocs = [5.613,-5.613]
+A = 306
+Z = 122
 
 locs = []
 
@@ -960,12 +960,12 @@ for f in locFiles:
         elif center_method == 'extent': 
             locs.append(experimental_get_prefragment_locs(df,key,close=False))
     
-    print('Neutron locs: ',locs[0])
-    print('Proton locs: ',locs[1])
+    print('Neutron locs: ',neutronLocs)
+    print('Proton locs: ',protonLocs)
     
     print(50*'=')
     nFrags, nNeck, zFrags, zNeck = \
-        get_prefragments_and_neck_numbers(df,locs[0],locs[1],A,Z)
+        get_prefragments_and_neck_numbers(df,neutronLocs,protonLocs,A,Z)
         
     nFrags, nNeck = restore_neck_nucleons(nFrags,nNeck)
     zFrags, zNeck = restore_neck_nucleons(zFrags,zNeck)

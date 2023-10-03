@@ -18,7 +18,7 @@ if __name__ == "__main__":
     today = date.today()
     ### Define nucleus data path (assumes our github structure)
     edf = 'skms'
-    nuc = '258Fm'
+    nuc = 'Z_122_N_184'
 
     plot_slices = False
     save_data = True
@@ -26,11 +26,11 @@ if __name__ == "__main__":
     
     surface_path = os.path.expanduser(f'~/multimodal/surfaces/q20-q30-q40_surfaces/{edf}/{nuc}.dat') 
     
-    PESdf = pd.read_csv(surface_path,delimiter=',')
-    
+    PESdf = pd.read_csv(surface_path,delimiter='\s+')
+    PESdf = PESdf.sort_values(by=['Q20','Q30','Q40'])
     #NOTE: THE COORDINATES ARE expected_* IN THE DATA FRAME
     
-    uniq_coords = [np.unique(PESdf['expected_q20'].to_numpy()),np.unique(PESdf['expected_q30'].to_numpy()),np.unique(PESdf['expected_q40'].to_numpy())]
+    uniq_coords = [np.unique(PESdf['Q20'].to_numpy()),np.unique(PESdf['Q30'].to_numpy()),np.unique(PESdf['Q40'].to_numpy())]
     gridDims= [len(uniq_coords[0]),len(uniq_coords[1]),len(uniq_coords[2])]
     
     grids = np.meshgrid(*uniq_coords)
@@ -40,10 +40,10 @@ if __name__ == "__main__":
         
     EE = PESdf['EHFB'].to_numpy().reshape(*gridDims)
     M22_grid = PESdf['M_22'].to_numpy().reshape(*gridDims)
-    M23_grid = PESdf['M_23'].to_numpy().reshape(*gridDims)
-    M24_grid = PESdf['M_24'].to_numpy().reshape(*gridDims)
+    M23_grid = PESdf['M_32'].to_numpy().reshape(*gridDims)
+    M24_grid = PESdf['M_42'].to_numpy().reshape(*gridDims)
     M33_grid = PESdf['M_33'].to_numpy().reshape(*gridDims)
-    M34_grid = PESdf['M_34'].to_numpy().reshape(*gridDims)
+    M34_grid = PESdf['M_43'].to_numpy().reshape(*gridDims)
     M44_grid = PESdf['M_44'].to_numpy().reshape(*gridDims)
     mass_grids = [M22_grid,M23_grid,M24_grid,M33_grid,M34_grid,M44_grid]
     

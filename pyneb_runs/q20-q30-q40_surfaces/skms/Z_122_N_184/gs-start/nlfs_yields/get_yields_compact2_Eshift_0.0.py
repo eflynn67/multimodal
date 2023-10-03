@@ -695,7 +695,7 @@ def plot_localization(df,col):
     arrToPlot = df[col].to_numpy().reshape(shp)
     
     fig, ax = plt.subplots()
-    cf = ax.contourf(rr,zz,arrToPlot,cmap="Spectral_r",levels=50)
+    cf = ax.contourf(rr,zz,arrToPlot,cmap="Spectral_r",levels=100)
     ax.set(xlabel=r"$r$",ylabel=r"$z$",title=col,
            xlim=xlims,ylim=ylims
            )
@@ -711,7 +711,7 @@ def get_minima(df,col,plot=False):
     
     interp_loc = scipy.interpolate.interp1d(axisDf["z"],axisDf[col],
                                             kind='cubic')
-    denseZ = np.linspace(axisDf['z'].min(),axisDf['z'].max(),500)
+    denseZ = np.linspace(axisDf['z'].min(),axisDf['z'].max(),1000)
     denseLocalization = interp_loc(denseZ)
     idx = scipy.signal.argrelextrema(denseLocalization,np.less)
     
@@ -754,7 +754,7 @@ def experimental_get_prefragment_locs(df,col,allExtremaZVals=None,close=True):
     oneSidedSegs = segs[segs[:,0]>0]
     segs_interp = scipy.interpolate.interp1d(oneSidedSegs[:,1],oneSidedSegs[:,0],
                                              kind='cubic')
-    denseZ = np.linspace(oneSidedSegs[:,1].min(),oneSidedSegs[:,1].max(),500)
+    denseZ = np.linspace(oneSidedSegs[:,1].min(),oneSidedSegs[:,1].max(),1000)
     denseSegs = segs_interp(denseZ)
     
     otherInds = scipy.signal.argrelextrema(denseSegs,np.greater)[0]
@@ -935,14 +935,14 @@ textboxProps = {"boxstyle":'round', "facecolor":'white', "alpha":1}
 xlims = (-20,20)
 ylims = (-20,20)
 
-mode = 'asymm2'
+# locFiles = ["localizations/"+f for f in os.listdir("localizations")]
+mode = 'compact2'
 Eshift = '0.0'
 center_method = 'lines'
 locFiles = [f'localization_{mode}.dat',]
 
-# manual input from lines
-neutronLocs = [4.95,-2.788]
-protonLocs = [5.292,-2.674]
+# neutronLocs = [7.56,-5.15]
+# protonLocs = [6.58,-5.65]
 A = 306
 Z = 122
 
@@ -960,12 +960,12 @@ for f in locFiles:
         elif center_method == 'extent': 
             locs.append(experimental_get_prefragment_locs(df,key,close=False))
     
-    print('Neutron locs: ',neutronLocs)
-    print('Proton locs: ',protonLocs)
+    print('Neutron locs: ',locs[0])
+    print('Proton locs: ',locs[1])
     
     print(50*'=')
     nFrags, nNeck, zFrags, zNeck = \
-        get_prefragments_and_neck_numbers(df,neutronLocs,protonLocs,A,Z)
+        get_prefragments_and_neck_numbers(df,locs[0],locs[1],A,Z)
         
     nFrags, nNeck = restore_neck_nucleons(nFrags,nNeck)
     zFrags, zNeck = restore_neck_nucleons(zFrags,zNeck)
@@ -992,7 +992,6 @@ for f in locFiles:
         f.write(f'{locs[1]}')
     
     #After we trust the code, run in this mode to just use my results
-    # fragYields = FragmentYields(nFrags,zFrags,nNeck,zNeck)
+    #fragYields = FragmentYields(nFrags,zFrags,nNeck,zNeck)
     # dfByA, dfByZ = fragYields()
     
-

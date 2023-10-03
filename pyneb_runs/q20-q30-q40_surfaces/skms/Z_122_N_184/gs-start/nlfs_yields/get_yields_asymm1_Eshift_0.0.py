@@ -942,8 +942,8 @@ locFiles = [f'localization_{mode}.dat',]
 
 # neutronLocs = [7.56,-5.15]
 # protonLocs = [6.58,-5.65]
-A = 258
-Z = 100
+A = 306
+Z = 122
 
 locs = []
 

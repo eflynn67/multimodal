@@ -145,7 +145,8 @@ if __name__ == "__main__":
 ## NEB Calculation
 ###############################################################################
     
-    path_type = ['Asymm_1','Compact','Compact2','Asymm_elongated']
+    #path_type = ['Asymm_1','Compact','Compact2','Asymm_elongated']
+    path_type = ['Asymm_2']
     NImgs = 122
     k = 2.0 
     kappa = 1.0
@@ -166,12 +167,17 @@ if __name__ == "__main__":
     
     dt = .1
     NIterations_const = 0
-    NIterations_var = 100000
+    NIterations_var = 8000
     
     ### define initial path
     R0 = gs_coord_grid
     
-    RNArr = [[120,16,30],[142,0,15],[260,0,10],[280,8,175]]
+    #[120,16,30] = Asymm1
+    #[142,0,15] = compact
+    #[260,0,10] = compact2
+    #[280,8,175] = asymm_elongated
+    #RNArr = [[120,16,30],[142,0,15],[260,0,10],[280,8,175]]
+    RNArr = [[90,16,10]]
 
     colorArr = ['lime','blue','red','orange']
     #colorArr = ['blue']
